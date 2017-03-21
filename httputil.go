@@ -1,6 +1,6 @@
 package sdk
 
-import(
+import (
 	"bytes"
 	"encoding/json"
 	// "errors"
@@ -10,10 +10,10 @@ import(
 )
 
 type param struct {
-	Method string
-	URI string
+	Method      string
+	URI         string
 	ContentType string
-	Data []byte
+	Data        []byte
 }
 
 func request(p *param) ([]byte, error) {

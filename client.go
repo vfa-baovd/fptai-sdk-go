@@ -8,9 +8,9 @@ import (
 
 type client struct {
 	sessionID string
-	username string
-	password string
-	
+	username  string
+	password  string
+
 	Timeout int
 }
 
@@ -18,7 +18,7 @@ func NewClient(username, password string) (*client, error) {
 	var c client = client{
 		username: username,
 		password: password,
-		Timeout: TIMEOUT,
+		Timeout:  TIMEOUT,
 	}
 
 	return &c, nil
@@ -28,14 +28,14 @@ func (c *client) SessionID() string {
 	if c.sessionID == "" {
 		c.getSessionID()
 	}
-	
+
 	return c.sessionID
 }
 
 func (c *client) getSessionID() error {
 	p := param{
 		Method: "POST",
-		URI: fmt.Sprintf("%s/%s?username=%s&password=%s", OpenFPTEndpoint, SessionPath, c.username, c.password),
+		URI:    fmt.Sprintf("%s/%s?username=%s&password=%s", OpenFPTEndpoint, SessionPath, c.username, c.password),
 	}
 
 	resp, err := request(&p)
@@ -48,9 +48,9 @@ func (c *client) getSessionID() error {
 	return nil
 }
 
-func (c *client) GetApp(code string) *application {
-	return &application{
+func (c *client) GetApp(code string) *Application {
+	return &Application{
 		client: c,
-		code: code,
+		code:   code,
 	}
 }
