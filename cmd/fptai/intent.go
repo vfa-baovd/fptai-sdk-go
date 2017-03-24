@@ -21,8 +21,9 @@ func TrainIntent(app *fptai.Application, inputFP string) error {
 		return err
 	}
 
+	total := len(ius)
 	for i, iu := range ius {
-		fmt.Printf("%d\t: %s %s\n", i, iu.Intent, iu.Utterance)
+		fmt.Printf("%d/%d\t: %s %s\n", i, total, iu.Intent, iu.Utterance)
 		code, ok := labelCodeMap[iu.Intent]
 		if !ok {
 			intent, err := app.CreateIntent(iu.Intent, iu.Intent)
@@ -34,8 +35,14 @@ func TrainIntent(app *fptai.Application, inputFP string) error {
 			code = intent.Code
 		}
 
-		if err := app.AddSampleByCode(code, iu.Utterance); err != nil {
-			log.Error("failed to add sample by code: ", err)
+		// if err := app.AddSampleByCode(code, iu.Utterance); err != nil {
+		// 	log.Error("failed to add sample by code: ", err)
+		// 	return err
+		// }
+
+		_ = code
+		if err := app.AddSampleByLabel(iu.Intent, iu.Utterance); err != nil {
+			log.Error("failed to add sample by label: ", err)
 			return err
 		}
 	}

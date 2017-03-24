@@ -44,6 +44,7 @@ func (a *Application) Recognize(text string) (*IntentResponse, error) {
 }
 
 func (a *Application) Train() error {
+	log.Info("training...")
 	v := url.Values{}
 	v.Set("application_code", a.code)
 	v.Set("type", "intent")
@@ -60,9 +61,11 @@ func (a *Application) Train() error {
 		return err
 	}
 
+	log.Info("training done")
 	return nil
 }
 
+// Intents returns all intents of the application
 func (a *Application) Intents() (intents []*Intent, err error) {
 	v := url.Values{}
 	v.Set("session_id", a.client.SessionID())
@@ -122,6 +125,27 @@ func (a *Application) AddSampleByCode(code, sample string) error {
 	v := url.Values{}
 	v.Set("session_id", a.client.SessionID())
 	v.Set("intent_code", code)
+	v.Set("content", sample)
+	v.Set("application_code", a.code)
+
+	p := param{
+		Method: "POST",
+		URI: fmt.Sprintf("%s/sample_intent_man?%s", PrincipalEndpoint, v.Encode()),
+	}
+
+	_, err := request(&p)
+	if err != nil {
+		log.Error("failed to add sample: ", err)
+		return err
+	}
+
+	return nil
+}
+
+func (a *Application) AddSampleByLabel(label, sample string) error {
+	v := url.Values{}
+	v.Set("session_id", a.client.SessionID())
+	v.Set("intent_label", label)
 	v.Set("content", sample)
 	v.Set("application_code", a.code)
 
