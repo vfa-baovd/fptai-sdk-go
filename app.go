@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/url"
+	"strconv"
 
 	log "github.com/Sirupsen/logrus"
 )
@@ -13,13 +14,37 @@ type Application struct {
 	code   string
 }
 
+type IntentResponses struct {
+	Total int `json:"total"`
+	Data []IntentResponse `json:"data"`
+}
+
+func (irs IntentResponses) Top() *IntentResponse {
+	var top_confidence float64
+	var top_intent IntentResponse
+
+	for _, ir := range irs.Data {
+		confidence, err := strconv.ParseFloat(ir.Confidence, 64)
+		if err != nil {
+			// ignore this one
+			log.Errorf("failed to parse string to float. Error: %s. String: %s\n", err.Error(), ir.Confidence)
+		}
+		if confidence > top_confidence {
+			top_confidence = confidence
+			top_intent = ir
+		}
+	}
+
+	return &top_intent
+}
+
 type IntentResponse struct {
 	Intent     string `json:"label"`
 	Confidence string `json:"confidence"`
 }
 
 func (a *Application) Recognize(text string) (*IntentResponse, error) {
-	var ir IntentResponse
+	var irs IntentResponses
 
 	v := url.Values{}
 	v.Set("application_code", a.code)
@@ -33,15 +58,15 @@ func (a *Application) Recognize(text string) (*IntentResponse, error) {
 	resp, err := request(&p)
 	if err != nil {
 		log.Error("failed to request Recognition to FPT.AI: ", err)
-		return &ir, err
+		return nil, err
 	}
 
-	if err := json.Unmarshal(resp, &ir); err != nil {
+	if err := json.Unmarshal(resp, &irs); err != nil {
 		log.Error("failed to unmarshal: ", string(resp), err)
-		return &ir, err
+		return nil, err
 	}
 
-	return &ir, nil
+	return irs.Top(), nil
 }
 
 func (a *Application) Train() error {
