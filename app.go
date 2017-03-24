@@ -32,6 +32,7 @@ func (a *Application) Recognize(text string) (*IntentResponse, error) {
 
 	resp, err := request(&p)
 	if err != nil {
+		log.Error("failed to request Recognition to FPT.AI: ", err)
 		return &ir, err
 	}
 
