@@ -48,9 +48,10 @@ func (c *client) getSessionID() error {
 	return nil
 }
 
-func (c *client) GetApp(code string) *Application {
+func (c *client) GetApp(code, token string) *Application {
 	return &Application{
 		client: c,
 		code:   code,
+		token: token,
 	}
 }

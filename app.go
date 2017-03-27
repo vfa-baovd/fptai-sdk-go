@@ -12,6 +12,7 @@ import (
 type Application struct {
 	client *client
 	code   string
+	token	string
 }
 
 type IntentResponses struct {
@@ -48,6 +49,7 @@ func (a *Application) Recognize(text string) (*IntentResponse, error) {
 
 	v := url.Values{}
 	v.Set("application_code", a.code)
+	v.Set("api_key", a.token) // Why don't just call it token?
 	v.Set("content", text)
 	v.Set("type", "intent")
 	p := param{

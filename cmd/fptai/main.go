@@ -11,7 +11,7 @@ import (
 
 var target string
 var inputFP string
-var username, password, applicationCode string
+var username, password, applicationCode, applicationToken string
 
 func main() {
 	trainCmd := flag.NewFlagSet("train", flag.ExitOnError)
@@ -51,13 +51,14 @@ func main() {
 	Require(username, "username is required")
 	Require(password, "password is required")
 	Require(applicationCode, "application code is required")
+	Require(applicationToken, "application token is required")
 
 	client, err := fptai.NewClient(username, password)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	app := client.GetApp(applicationCode)
+	app := client.GetApp(applicationCode, applicationToken)
 
 	if trainCmd.Parsed() {
 		if target == "intent" {
@@ -95,6 +96,7 @@ func AddSharedFlags(fs *flag.FlagSet) {
 	fs.StringVar(&username, "u", "", "required, your username")
 	fs.StringVar(&password, "p", "", "required, your password")
 	fs.StringVar(&applicationCode, "c", "", "required, your application code")
+	fs.StringVar(&applicationToken, "token", "", "required, your application token")
 }
 
 const helpMessage string = `
@@ -113,6 +115,8 @@ Available commands and corresponding options:
 	  		required, your password
 	  -c string
 	  		required, your application code
+	  -token string 
+	  		required, your application token
 
 	test
 	  -t string
@@ -125,6 +129,8 @@ Available commands and corresponding options:
 	  		required, your password
 	  -c string
 	  		required, your application code
+	  -token string 
+	  		required, your application token
 
 	help
 `
