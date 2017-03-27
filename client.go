@@ -2,14 +2,18 @@ package sdk
 
 import (
 	"fmt"
+	"time"
 
 	log "github.com/Sirupsen/logrus"
 )
+
+const SESSION_TIMEOUT float64 = 25.0 // minutes
 
 type client struct {
 	sessionID string
 	username  string
 	password  string
+	lastCall 	time.Time
 
 	Timeout int
 }
@@ -18,6 +22,7 @@ func NewClient(username, password string) (*client, error) {
 	var c client = client{
 		username: username,
 		password: password,
+		lastCall: time.Now(),
 		Timeout:  TIMEOUT,
 	}
 
@@ -25,7 +30,9 @@ func NewClient(username, password string) (*client, error) {
 }
 
 func (c *client) SessionID() string {
-	if c.sessionID == "" {
+	defer func(c *client){c.lastCall = time.Now()}(c)
+
+	if c.sessionID == "" || time.Since(c.lastCall).Minutes() > SESSION_TIMEOUT {
 		c.getSessionID()
 	}
 
