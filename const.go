@@ -1,6 +1,6 @@
 package sdk
 
-const FPTAIEndpoint string = "http://api.openfpt.vn/fpt.ai"
+const FPTAIEndpoint string = "http://api.openfpt.vn/fpt.ai" // aka PackageEndpoint
 const OpenFPTEndpoint string = "http://dev.openfpt.vn"
 const PrincipalEndpoint string = "http://ai.openfpt.vn"
 

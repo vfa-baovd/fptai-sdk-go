@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/pkg/errors"
 )
 
 type Application struct {
@@ -206,4 +207,35 @@ func (a *Application) LabelCodeMap() (map[string]string, error) {
 	}
 
 	return m, nil
+}
+
+// ExtractEntities returns entities it found in the input text
+// API:
+	// http://{{package_domain}}/recognition?
+	// application_code={{application_code}}&
+	// content=I want to change HubID because I couldn't login.&
+	// type=entity
+func (a *Application) ExtractEntities(text string) ([]Entity, error) {
+	v := url.Values{}
+	v.Set("application_code", a.code)
+	v.Set("content", text)
+	v.Set("type", "entity")
+	v.Set("api_key", a.token)
+
+	p := param{
+		Method: "POST",
+		URI: fmt.Sprintf("%s/recognition?%s", FPTAIEndpoint, v.Encode()),
+	}
+
+	resp, err := request(&p)
+	if err != nil {
+		return nil, errors.Wrap(err, "request failed")
+	}
+
+	var er EntityResponse
+	if err := json.Unmarshal(resp, &er); err != nil {
+		return nil, errors.Wrap(err, "Unmarshal failed. Response = " + string(resp))
+	}
+
+	return er.Data, nil
 }
