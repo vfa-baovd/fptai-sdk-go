@@ -231,6 +231,7 @@ func (a *Application) ExtractEntities(text string) ([]Entity, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "request failed")
 	}
+	log.Error(string(resp))
 
 	var er EntityResponse
 	if err := json.Unmarshal(resp, &er); err != nil {

@@ -8,6 +8,7 @@ import (
 	"time"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/pkg/errors"
 )
 
 type param struct {
@@ -20,8 +21,7 @@ type param struct {
 func request(p *param) ([]byte, error) {
 	req, err := http.NewRequest(p.Method, p.URI, bytes.NewReader(p.Data))
 	if err != nil {
-		log.Error("failed to create new http request: ", err)
-		return nil, err
+		return nil, errors.Wrapf(err, "create new request failed. param = %+v\n", p)
 	}
 
 	if p.ContentType != "" {
@@ -34,17 +34,15 @@ func request(p *param) ([]byte, error) {
 
 	res, err := c.Do(req)
 	if err != nil {
-		log.Errorf("failed to request to FPT.AI. Error: %s\n", err.Error())
-		return nil, err
+		return nil, errors.Wrapf(err, "Do request failed, param = %+v\n", p)
 	}
 
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		log.Errorf("failed to read FPT.AI response body. Error: %s. Body: %s", err.Error(), string(body))
-		return nil, err
+		return nil, errors.Wrapf(err, "ReadAll failed. param = %+v; body = %s\n", p, string(body))
 	}
 	defer res.Body.Close()
-	log.Debugf("FPTAI response body: Status %d. Body: %s\n", res.StatusCode, string(body))
+	log.Debugf("Request to FPTAI:\nRequest:\tParam = %+v\nResponse: \tStatus %d. Body: %s\n", p, res.StatusCode, string(body))
 
 	if res.StatusCode != 200 {
 		var err Error
