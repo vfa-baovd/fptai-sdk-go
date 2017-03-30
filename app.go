@@ -77,6 +77,7 @@ func (a *Application) Train() error {
 	v := url.Values{}
 	v.Set("application_code", a.code)
 	v.Set("type", "intent")
+	v.Set("api_key", a.token)
 	v.Set("session_id", a.client.SessionID())
 
 	p := param{
