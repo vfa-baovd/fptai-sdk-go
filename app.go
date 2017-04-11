@@ -114,6 +114,25 @@ func (a *Application) Intents() (intents []*Intent, err error) {
 	return tmp.Data, nil
 }
 
+func (a *Application) DeleteIntent(intent Intent) error {
+	v := url.Values{}
+	v.Set("session_id", a.client.SessionID())
+	v.Set("intent_code", intent.Code)
+
+	p := param{
+		Method: "DELETE",
+		URI:    fmt.Sprintf("%s/intent_man?%s", PrincipalEndpoint, v.Encode()),
+	}
+
+	_, err := request(&p)
+	if err != nil {
+		log.Error("failed to delete intent: ", err)
+		return  err
+	}
+
+	return nil
+}
+
 func (a *Application) CreateIntent(label, description string) (*Intent, error) {
 	v := url.Values{}
 	v.Set("session_id", a.client.SessionID())
