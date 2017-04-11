@@ -45,7 +45,7 @@ func request(p *param) ([]byte, error) {
 	log.Debugf("Request to FPTAI:\nRequest:\tParam = %+v\nResponse: \tStatus %d. Body: %s\n", p, res.StatusCode, string(body))
 
 	if res.StatusCode != 200 {
-		var err Error
+		var err error
 		json.Unmarshal(body, &err)
 		log.Error("failed to request to FPT.AI: ", err)
 		return nil, err

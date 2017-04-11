@@ -11,14 +11,9 @@ import (
 )
 
 type Application struct {
-	client *client
+	client *Client
 	code   string
 	token	string
-}
-
-type IntentResponses struct {
-	Total int `json:"total"`
-	Data []IntentResponse `json:"data"`
 }
 
 func (irs IntentResponses) Top() *IntentResponse {
@@ -38,11 +33,6 @@ func (irs IntentResponses) Top() *IntentResponse {
 	}
 
 	return &top_intent
-}
-
-type IntentResponse struct {
-	Intent     string `json:"label"`
-	Confidence string `json:"confidence"`
 }
 
 func (a *Application) Recognize(text string) (*IntentResponse, error) {

@@ -4,11 +4,11 @@ import (
 	"fmt"
 )
 
-type Error struct {
+type FPTAIError struct {
 	Code    int    `json:"error"`
 	Message string `json:"message"`
 }
 
-func (e Error) Error() string {
+func (e FPTAIError) Error() string {
 	return fmt.Sprintf("%d - %s", e.Code, e.Message)
 }

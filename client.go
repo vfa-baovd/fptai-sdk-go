@@ -9,7 +9,7 @@ import (
 
 const SESSION_TIMEOUT float64 = 25.0 // minutes
 
-type client struct {
+type Client struct {
 	sessionID string
 	username  string
 	password  string
@@ -18,8 +18,8 @@ type client struct {
 	Timeout int
 }
 
-func NewClient(username, password string) (*client, error) {
-	var c client = client{
+func NewClient(username, password string) (*Client, error) {
+	var c Client = Client{
 		username: username,
 		password: password,
 		lastCall: time.Now(),
@@ -29,8 +29,8 @@ func NewClient(username, password string) (*client, error) {
 	return &c, nil
 }
 
-func (c *client) SessionID() string {
-	defer func(c *client){c.lastCall = time.Now()}(c)
+func (c *Client) SessionID() string {
+	defer func(c *Client){c.lastCall = time.Now()}(c)
 
 	if c.sessionID == "" || time.Since(c.lastCall).Minutes() > SESSION_TIMEOUT {
 		c.getSessionID()
@@ -39,7 +39,7 @@ func (c *client) SessionID() string {
 	return c.sessionID
 }
 
-func (c *client) getSessionID() error {
+func (c *Client) getSessionID() error {
 	p := param{
 		Method: "POST",
 		URI:    fmt.Sprintf("%s/%s?username=%s&password=%s", OpenFPTEndpoint, SessionPath, c.username, c.password),
@@ -55,7 +55,7 @@ func (c *client) getSessionID() error {
 	return nil
 }
 
-func (c *client) GetApp(code, token string) *Application {
+func (c *Client) GetApp(code, token string) *Application {
 	return &Application{
 		client: c,
 		code:   code,
