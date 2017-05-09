@@ -1,14 +1,14 @@
-package sdk
+package fptai
 
 import (
 	"fmt"
 )
 
-type FPTAIError struct {
-	Code    int    `json:"error"`
+type Error struct {
+	Code int `json:"code"`
 	Message string `json:"message"`
 }
 
-func (e FPTAIError) Error() string {
-	return fmt.Sprintf("%d - %s", e.Code, e.Message)
+func (e Error) Error() string {
+	return fmt.Sprintf("%d: %s", e.Code, e.Message)
 }

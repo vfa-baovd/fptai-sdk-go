@@ -3,13 +3,13 @@ package main
 import (
 	"fmt"
 
-	fptai "github.com/fpt-corp/fptai-sdk-go"
+	"github.com/fpt-corp/fptai-sdk-go"
 
 	"github.com/michlabs/nlu"
 	log "github.com/Sirupsen/logrus"
 )
 
-func TrainIntent(app *fptai.Application, inputFP string) error {
+func TrainIntent(client *fptai.Client, inputFP string) error {
 	ius, err := nlu.ReadIntentsFromFile(inputFP)
 	if err != nil {
 		return err
