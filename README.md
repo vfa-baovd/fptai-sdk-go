@@ -1,15 +1,33 @@
 # fptai-sdk-go
 FPT.AI SDK for the Go programming language
 
-## fptai CLI
-Installation and usage
+## Usage
+```
+$ go get github.com/fpt-corp/fptai-sdk-go
+```
+Example
+```go
+package main
+
+import (
+    "github.com/fpt-corp/fptai-sdk-go"
+)
+
+func main() {
+    client := fptai.NewClient("your_token")
+    ...
+}
+```
+
+## FPTAI CLI
+SDK comes with a handy CLI tool that helps you import training data and evaluate.
 ```
 $ export GOPATH=$(pwd)
 $ export PATH=$PATH:$GOPATH/bin
 $ go get github.com/fpt-corp/fptai-sdk-go/cmd/fptai
 $ fptai help
-$ fptai train -t intent -i train.csv -u your_username -p your_password -c your_application_code
-$ fptai test -t intent -i test.csv -u your_username -p your_password -c your_application_code
+$ fptai train -t intent -i train.csv -token your_token
+$ fptai test -t intent -i test.csv -token your_token
 ```
 
 training.csv and test.csv file must be a CSV file and in following format:

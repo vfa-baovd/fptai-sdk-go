@@ -6,12 +6,12 @@ import (
 	"os"
 	"log"
 
-	fptai "github.com/fpt-corp/fptai-sdk-go"
+	"github.com/fpt-corp/fptai-sdk-go"
 )
 
 var target string
 var inputFP string
-var username, password, applicationCode, applicationToken string
+var token string
 
 func main() {
 	trainCmd := flag.NewFlagSet("train", flag.ExitOnError)
@@ -48,21 +48,16 @@ func main() {
 	}
 
 	Require(inputFP, "input file is required")
-	Require(username, "username is required")
-	Require(password, "password is required")
-	Require(applicationCode, "application code is required")
-	Require(applicationToken, "application token is required")
+	Require(token, "application token is required")
 
-	client, err := fptai.NewClient(username, password)
+	client, err := fptai.NewClient(token)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	app := client.GetApp(applicationCode, applicationToken)
-
 	if trainCmd.Parsed() {
 		if target == "intent" {
-			err := TrainIntent(app, inputFP)	
+			err := TrainIntent(client, inputFP)	
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -73,7 +68,7 @@ func main() {
 
 	if testCmd.Parsed() {
 		if target == "intent" {
-			if err := TestIntent(app, inputFP); err != nil {
+			if err := TestIntent(client, inputFP); err != nil {
 				log.Fatal(err)
 			}
 		} else {
@@ -93,10 +88,7 @@ func Require(f, errMsg string) {
 func AddSharedFlags(fs *flag.FlagSet) {
 	fs.StringVar(&target, "t", "", "required, intent or entity")
 	fs.StringVar(&inputFP, "i", "", "required, path to the input file")
-	fs.StringVar(&username, "u", "", "required, your username")
-	fs.StringVar(&password, "p", "", "required, your password")
-	fs.StringVar(&applicationCode, "c", "", "required, your application code")
-	fs.StringVar(&applicationToken, "token", "", "required, your application token")
+	fs.StringVar(&token, "token", "", "required, your application token")
 }
 
 const helpMessage string = `
@@ -109,12 +101,6 @@ Available commands and corresponding options:
 	    	required, type of training (intent, entity)
 	  -i string
 	    	required, path to your input file
-	  -u string
-	  		required, your username
-	  -p string
-	  		required, your password
-	  -c string
-	  		required, your application code
 	  -token string 
 	  		required, your application token
 
@@ -123,12 +109,6 @@ Available commands and corresponding options:
 	    	required, type of training (intent, entity)
 	  -i string
 	    	required, path to your input file
-	  -u string
-	  		required, your username
-	  -p string
-	  		required, your password
-	  -c string
-	  		required, your application code
 	  -token string 
 	  		required, your application token
 

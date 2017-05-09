@@ -1,9 +1,6 @@
-package sdk
+package fptai
 
-const FPTAIEndpoint string = "http://api.openfpt.vn/fpt.ai" // aka PackageEndpoint
-const OpenFPTEndpoint string = "http://dev.openfpt.vn"
-const PrincipalEndpoint string = "http://ai.openfpt.vn"
+const FPTAIEndpoint string = "https://api.fpt.ai"
+const VERSION string = "v1"
 
-const SessionPath string = "session"
-
-const TIMEOUT int = 30 // seconds
+const REQUEST_TIMEOUT int = 10 // in seconds
