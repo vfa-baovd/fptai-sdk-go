@@ -23,23 +23,23 @@ func NewClient(token string) *Client {
 	}
 }
 
-func (c *Client) GetIntents() (irs []IntentResponse, err error) {
+func (c *Client) GetIntents() (intents []Intent, err error) {
 	resp, err := c.get("/intents")
 	if err != nil {
-		return irs, errors.Wrapf(err, "get failed")
+		return intents, errors.Wrapf(err, "get failed")
 	}
 
 	result := struct{
-		Intents []IntentResponse
+		Intents []Intent
 	}{}
 	if err := json.Unmarshal(resp, &result); err != nil {
-		return irs, err
+		return intents, err
 	}
 
 	return result.Intents, nil
 }
 
-func (c *Client) CreateIntent(name, description string) (i IntentResponse, err error) {
+func (c *Client) CreateIntent(name, description string) (i Intent, err error) {
 	r := struct{
 		Name string `json:"label"`
 		Description string
@@ -87,7 +87,7 @@ func (c *Client) CreateUtterances(intent string, utterances []string) error {
 	return nil
 }
 
-func (c *Client) RecognizeIntents(text string) (intents []Intent, err error) {
+func (c *Client) RecognizeIntents(text string) (m Meaning, err error) {
 	r := struct{
 		Text string
 	}{
@@ -95,24 +95,20 @@ func (c *Client) RecognizeIntents(text string) (intents []Intent, err error) {
 	}
 	data, err := json.Marshal(r)
 	if err != nil {
-		return intents, err
+		return m, err
 	}
 
 	resp, err := c.post("/recognize/intent", data)
 	if err != nil {
-		return intents, err
+		return m, err
 	}
 
-	result := struct{
-		Intents []Intent
-	}{}
-
-	err = json.Unmarshal(resp, &result)
+	err = json.Unmarshal(resp, &m)
 	if err != nil {
-		return intents, errors.Wrapf(err, "Unmarshal failed, data=%s", string(resp))
+		return m, errors.Wrapf(err, "Unmarshal failed, data=%s", string(resp))
 	}
 
-	return result.Intents, nil
+	return m, nil
 }
 
 func (c *Client) TrainIntent() error {
