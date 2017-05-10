@@ -23,18 +23,20 @@ func NewClient(token string) *Client {
 	}
 }
 
-func (c *Client) GetIntents() (intentResponse IntentArrayResponse, err error)  {
+func (c *Client) GetIntents() (irs []IntentResponse, err error) {
 	resp, err := c.get("/intents")
 	if err != nil {
-		return intentResponse, errors.Wrapf(err, "post failed")
+		return irs, errors.Wrapf(err, "get failed")
 	}
 
-	log.Println(string(resp))
-	if err := json.Unmarshal(resp, &intentResponse); err != nil {
-		return intentResponse, err
+	result := struct{
+		Intents []IntentResponse
+	}{}
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return irs, err
 	}
 
-	return intentResponse, nil
+	return result.Intents, nil
 }
 
 func (c *Client) CreateIntent(name, description string) (i IntentResponse, err error) {

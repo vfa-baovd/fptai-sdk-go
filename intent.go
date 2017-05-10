@@ -8,10 +8,6 @@ type IntentResponse struct {
 	ApplicationCode string `json:"application_code"`
 }
 
-type IntentArrayResponse struct {
-	Intents []IntentResponse `json:"intents"`
-}
-
 type Intent struct {
 	Name string `json:"label"`
 	Confidence float64
