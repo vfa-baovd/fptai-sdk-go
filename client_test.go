@@ -46,6 +46,7 @@ func TestCreateIntent(t *testing.T) {
 		}
 	}
 	t.Run("CreateUtterances", testCreateUtterances)
+	t.Run("GetIntents", testGetIntents)
 	t.Run("TrainIntent", testTrainIntent)
 	time.Sleep(3) // wait for training
 	t.Run("RecognizeIntent", testRecognizeIntents)
@@ -53,12 +54,12 @@ func TestCreateIntent(t *testing.T) {
 }
 
 func testGetIntents(t *testing.T) {
-	irs, err := client.GetIntents()
+	intents, err := client.GetIntents()
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	if len(irs) != 2 {
+	if len(intents) != 2 {
 		t.Error("missing some intents")
 		return
 	}
@@ -92,16 +93,16 @@ func testTrainIntent(t *testing.T) {
 func testRecognizeIntents(t *testing.T) {
 	for _, i := range intents {
 		for _, u := range i.Utterances {
-			resp, err := client.RecognizeIntents(u)
+			m, err := client.RecognizeIntents(u)
 			if err != nil {
 				t.Error(err)
 				return
 			}
-			if len(resp) == 0 {
+			if len(m.Intents) == 0 {
 				t.Error("recognize failed")
 				return
 			}
-			if resp[0].Name != i.Name {
+			if m.Intents[0].Name != i.Name {
 				t.Error("recognize failed")
 				return
 			}
