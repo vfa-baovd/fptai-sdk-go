@@ -46,6 +46,7 @@ func TestCreateIntent(t *testing.T) {
 		}
 	}
 	t.Run("CreateUtterances", testCreateUtterances)
+	t.Run("GetIntents", testGetIntents)
 	t.Run("TrainIntent", testTrainIntent)
 	time.Sleep(3) // wait for training
 	t.Run("RecognizeIntent", testRecognizeIntents)
