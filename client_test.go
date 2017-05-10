@@ -52,6 +52,18 @@ func TestCreateIntent(t *testing.T) {
 	t.Run("DeleteIntent", testDeleteIntent)
 }
 
+func testGetIntents(t *testing.T) {
+	irs, err := client.GetIntents()
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	if len(irs) != 2 {
+		t.Error("missing some intents")
+		return
+	}
+}
+
 func testDeleteIntent(t *testing.T) {
 	for _, i := range intents {
 		err := client.DeleteIntent(i.Name)
@@ -89,7 +101,6 @@ func testRecognizeIntents(t *testing.T) {
 				t.Error("recognize failed")
 				return
 			}
-			log.Println(resp[0].Name)
 			if resp[0].Name != i.Name {
 				t.Error("recognize failed")
 				return

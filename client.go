@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/pkg/errors"
 	log "github.com/Sirupsen/logrus"
+	"github.com/pkg/errors"
 )
 
 type Client struct {
@@ -21,6 +21,22 @@ func NewClient(token string) *Client {
 	return &Client{
 		token: token,
 	}
+}
+
+func (c *Client) GetIntents() (irs []IntentResponse, err error) {
+	resp, err := c.get("/intents")
+	if err != nil {
+		return irs, errors.Wrapf(err, "get failed")
+	}
+
+	result := struct{
+		Intents []IntentResponse
+	}{}
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return irs, err
+	}
+
+	return result.Intents, nil
 }
 
 func (c *Client) CreateIntent(name, description string) (i IntentResponse, err error) {
